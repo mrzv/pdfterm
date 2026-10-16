@@ -20,8 +20,11 @@ pub(super) struct Tab {
     pub(super) dark_mode_style: DarkModeStyle,
     pub(super) search_highlight: [u8; 3],
     pub(super) link_highlight: [u8; 3],
-    pub(super) scroll_x: u32,
+    // Content alignment may put the first visible page outside its own crop
+    // range while a wider following page retains the viewport's horizontal pan.
+    pub(super) scroll_x: i64,
     pub(super) scroll_y: u32,
+    pub(super) center_content: bool,
     pub(super) outline: Arc<Vec<OutlineItem>>,
     pub(super) cache: HashMap<RenderKey, Arc<Frame>>,
     pub(super) search: SearchState,
@@ -247,6 +250,7 @@ impl App {
                     link_highlight: terminal_color_rgb(self.theme.cyan),
                     scroll_x: 0,
                     scroll_y: 0,
+                    center_content: true,
                     outline: Arc::new(outline),
                     cache: HashMap::new(),
                     search: SearchState::default(),
@@ -262,6 +266,7 @@ impl App {
                     tab.fit = view.fit;
                     tab.zoom = view.zoom;
                     tab.invert = view.invert;
+                    tab.center_content = view.position.center_content;
                 }
                 self.session.active_tab = self.session.tabs.len() - 1;
                 self.clear_viewer(output)?;
@@ -320,6 +325,7 @@ impl App {
                 page: tab.page,
                 scroll_x: tab.scroll_x,
                 scroll_y: tab.scroll_y,
+                center_content: tab.center_content,
             },
             fit: tab.fit,
             zoom: tab.zoom,

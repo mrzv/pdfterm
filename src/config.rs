@@ -33,6 +33,7 @@ enum FitModeSetting {
     Page,
     Width,
     Height,
+    Content,
 }
 
 #[derive(Debug, Default, Clone, Copy, Deserialize, Serialize, Eq, PartialEq)]
@@ -172,6 +173,7 @@ impl Config {
             FitModeSetting::Page => FitMode::Page,
             FitModeSetting::Width => FitMode::Width,
             FitModeSetting::Height => FitMode::Height,
+            FitModeSetting::Content => FitMode::Content,
         }
     }
 
